@@ -8,20 +8,25 @@
 
 ## Overview
 
-Strix is a robust, event-driven mailing assistant for World of Warcraft. Designed to be your personal mailing steward, it streamlines the process of managing mail and sending items to your alternate characters (alts).
+Strix is a robust, event-driven mailing assistant for World of Warcraft. It serves as your personal address book, streamlining the process of sending items to your alternate characters (alts) and frequent correspondents.
 
 ## Features
 
-*   **Event-Driven Architecture:** Optimized for performance, reacting efficiently to game events.
-*   **Mailing Assistant:** Simplifies the workflow of sending mail.
-*   **Profile Management:** Saves your configuration and preferences via `StrixDB`.
+*   **Smart Address Book:** Right-click the **"To:"** field in the standard Mailbox interface to open a quick-select menu.
+*   **Automatic Alt Registration:** Simply log in to your characters to add them to the "My Alts" list. Records Name, Realm, Faction, Class, Race, and Level.
+*   **Recent Recipients:** Automatically saves the names of players you send mail to.
+*   **List Management:**
+    *   **My Alts:** Drag-and-drop to reorder your priority characters.
+    *   **Recent Recipients:** One-click option to promote a recent recipient to your "My Alts" list.
+    *   **Display Limits:** Separate sliders to control how many Alts and Recent Recipients appear in the right-click menu.
+*   **Event-Driven:** Optimized for performance with low memory usage.
+*   **Localization:** Full support for English and Simplified Chinese.
 
-## Installation
+## Usage
 
-1. Download the addon.
-2. Extract the `Strix` folder into your World of Warcraft AddOns directory:
-   *   `World of Warcraft\_retail_\Interface\AddOns\`
-3. Log in to the game. If the game is already running, type `/reload` to load the addon.
+1.  **Register Alts:** Log in to each of your characters once to register them in Strix.
+2.  **Send Mail:** Open the Mailbox and **Right-Click** the recipient input box to select a character.
+3.  **Settings:** Type `/strix` or use the context menu "Manage List..." option to open the configuration panel. Here you can sort alts, delete entries, and adjust menu limits.
 
 ---
 
@@ -32,17 +37,22 @@ Strix is a robust, event-driven mailing assistant for World of Warcraft. Designe
 
 ## 简介
 
-Strix 是一款强大且基于事件驱动的魔兽世界邮件助手。它旨在作为您的“小号邮寄管家”，简化您在角色之间管理邮件和发送物品的流程。
+Strix 是一款强大且基于事件驱动的魔兽世界邮件助手。它作为您的个人邮件地址簿，极大地简化了给小号（Alts）或常用联系人寄送物品的流程。
 
 ## 功能特点
 
-*   **事件驱动架构:** 高效处理游戏内事件，确保插件运行流畅且占用低。
-*   **邮件管家:** 优化邮件发送流程，方便快捷地给小号寄送物资。
-*   **配置保存:** 使用 `StrixDB` 保存您的个人设置。
+*   **智能地址簿:** 在游戏自带邮箱的 **“收件人”** 输入框上 **右键点击**，即可呼出快速选择菜单。
+*   **自动记录小号:** 只需登录您的角色，插件即会自动将其注册到“我的小号”列表中。记录信息包括姓名、服务器、阵营、职业、种族和等级。
+*   **最近收件人:** 自动保存您最近发送过邮件的玩家名称。
+*   **列表管理:**
+    *   **我的小号:** 支持拖拽排序，将常用小号排在前面。
+    *   **最近收件人:** 支持一键将“最近收件人”升级为“我的小号”。
+    *   **显示限制:** 可分别设置右键菜单中“我的小号”和“最近收件人”的显示数量。
+*   **事件驱动:** 针对性能进行了优化，占用极低。
+*   **本地化:** 完美支持简体中文和英文。
 
-## 安装指南
+## 使用指南
 
-1. 下载插件包。
-2. 将 `Strix` 文件夹解压至您的魔兽世界插件目录：
-   *   `World of Warcraft\_retail_\Interface\AddOns\`
-3. 进入游戏。如果游戏已经在运行中，请输入 `/reload` 重载界面。
+1.  **注册小号:** 分别登录您想记录的每一个角色，插件会自动保存信息。
+2.  **发送邮件:** 打开邮箱，在收件人输入框上 **右键点击** 即可选择角色。
+3.  **设置:** 输入 `/strix` 或点击菜单中的“管理列表...”即可打开设置面板。在这里您可以调整排序、删除条目或设置菜单显示数量。

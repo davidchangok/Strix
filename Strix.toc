@@ -1,13 +1,21 @@
-## Interface: 12000
+## Interface: 120000
 ## Title: Strix
-## Notes: A robust, event-driven mailing assistant.
-## Notes-zhCN: 你的小号邮寄管家。
+## Notes: A robust, event-driven mailing assistant for managing alt characters.
+## Notes-zhCN: 邮件地址簿 - 快速选择小号作为邮件收件人。
+## Notes-zhTW: 郵件地址簿 - 快速選擇小號作為郵件收件人。
 ## Author: David W Zhang
 ## Version: 1.0.0
 ## IconTexture: Interface\Icons\inv_summerfest_symbol_owl
 ## SavedVariables: StrixDB
+## X-Website: https://github.com/davidchangok/Strix
+## X-Curse-Project-ID: 1452322
+## X-Category: Mail
 
-# Core Modules
+# Localization (must load first)
 Locales.lua
+
+# Data Layer
 DataManager.lua
+
+# Core UI and Logic
 Core.lua
