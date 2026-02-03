@@ -4,7 +4,7 @@
 ## Notes-zhCN: 邮件地址簿 - 快速选择小号作为邮件收件人。
 ## Notes-zhTW: 郵件地址簿 - 快速選擇小號作為郵件收件人。
 ## Author: David W Zhang
-## Version: 1.0.0
+## Version: 1.1.0
 ## IconTexture: Interface\Icons\inv_summerfest_symbol_owl
 ## SavedVariables: StrixDB
 ## X-Website: https://github.com/davidchangok/Strix

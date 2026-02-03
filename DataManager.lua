@@ -272,6 +272,43 @@ function Data:DeleteAltByIndex(index)
     return true
 end
 
+--[[
+    Function: Data:PromoteAltToFirst
+    Description: Moves an alt to the first position in the list
+    Parameters:
+        @param key (string) - The alt's key (name-realm)
+    Returns:
+        @return (boolean) - True if promoted, false if not found or already first
+--]]
+function Data:PromoteAltToFirst(key)
+    if type(key) ~= "string" then return false end
+
+    if not StrixDB or type(StrixDB.alts) ~= "table" then
+        return false
+    end
+
+    local db = StrixDB.alts
+
+    -- Find the alt's current index
+    local foundIndex = nil
+    for i, alt in ipairs(db) do
+        if alt.key == key then
+            foundIndex = i
+            break
+        end
+    end
+
+    -- Not found or already first
+    if not foundIndex then return false end
+    if foundIndex == 1 then return true end
+
+    -- Remove and insert at first position
+    local alt = table.remove(db, foundIndex)
+    table.insert(db, 1, alt)
+
+    return true
+end
+
 -- ==============================================================================
 -- Public API: Recent Recipients (Non-Alt Players)
 -- ==============================================================================

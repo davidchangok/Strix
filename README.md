@@ -3,7 +3,7 @@
 ![Author](https://img.shields.io/badge/Author-David%20W%20Zhang-orange)
 # Strix
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Author:** David W Zhang
 
 ## Overview
@@ -32,7 +32,7 @@ Strix is a robust, event-driven mailing assistant for World of Warcraft. It serv
 
 # Strix (中文)
 
-**版本:** 1.0.0  
+**版本:** 1.1.0  
 **作者:** David W Zhang
 
 ## 简介

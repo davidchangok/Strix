@@ -83,6 +83,7 @@ Core:RegisterEvent("ADDON_LOADED")
 Core:RegisterEvent("PLAYER_LOGIN")
 Core:RegisterEvent("MAIL_SHOW")
 Core:RegisterEvent("MAIL_SEND_SUCCESS")
+Core:RegisterEvent("MAIL_INBOX_UPDATE")
 
 Core:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
@@ -102,6 +103,9 @@ Core:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "MAIL_SEND_SUCCESS" then
         self:OnMailSent()
+
+    elseif event == "MAIL_INBOX_UPDATE" then
+        self:CheckInboxForAlts()
     end
 end)
 
@@ -124,6 +128,48 @@ function Core:OnMailSent()
     -- Add to recent recipients (will be skipped if it's an alt)
     Data:AddRecentRecipient(name, realm)
 end
+
+-- ==============================================================================
+-- Inbox Check - Auto-promote alt senders to first position
+-- ==============================================================================
+function Core:CheckInboxForAlts()
+    local numItems = GetInboxNumItems()
+    if not numItems or numItems == 0 then return end
+
+    local currentRealm = GetRealmName() or ""
+
+    -- Check each mail for alt senders
+    for i = 1, numItems do
+        local _, _, sender = GetInboxHeaderInfo(i)
+        if sender and sender ~= "" then
+            -- Parse sender name-realm (may or may not include realm)
+            local name, realm = strsplit("-", sender)
+            name = strtrim(name or "")
+            realm = strtrim(realm or "")
+
+            -- Default to current realm if not specified
+            if realm == "" then
+                realm = currentRealm
+            end
+
+            local key = name .. "-" .. realm
+
+            -- If sender is one of my alts, promote to first position
+            if Data:IsMyAlt(key) then
+                if Data:PromoteAltToFirst(key) then
+                    -- Only promote one alt per inbox check to avoid excessive reordering
+                    return
+                end
+            end
+        end
+    end
+end
+
+-- ==============================================================================
+-- Private Tooltip (avoid tainting GameTooltip)
+-- ==============================================================================
+local StrixTooltip = CreateFrame("GameTooltip", "StrixPrivateTooltip", UIParent, "GameTooltipTemplate")
+StrixTooltip:SetFrameStrata("TOOLTIP")
 
 -- ==============================================================================
 -- Mailbox Hook
@@ -149,14 +195,17 @@ function Core:HookMailBox()
         end
     end)
 
+    -- Use private tooltip to avoid tainting GameTooltip (which causes secret value errors)
     SendMailNameEditBox:HookScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-        GameTooltip:AddLine(L.TOOLTIP_TITLE, 0, 1, 0)
-        GameTooltip:AddLine(L.TOOLTIP_HINT, 1, 1, 1)
-        GameTooltip:Show()
+        StrixTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+        StrixTooltip:AddLine(L.TOOLTIP_TITLE, 0, 1, 0)
+        StrixTooltip:AddLine(L.TOOLTIP_HINT, 1, 1, 1)
+        StrixTooltip:Show()
     end)
 
-    SendMailNameEditBox:HookScript("OnLeave", GameTooltip_Hide)
+    SendMailNameEditBox:HookScript("OnLeave", function()
+        StrixTooltip:Hide()
+    end)
 
     self.isHooked = true
 end
