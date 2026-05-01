@@ -8,7 +8,7 @@
         Features: mailbox hook, options panel with tabs, context menu.
 
     Author: David W Zhang
-    Version: 1.1.0
+    Version: 1.1.1
 ================================================================================
 --]]
 

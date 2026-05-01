@@ -8,7 +8,7 @@
         Currently supports English (enUS) and Simplified Chinese (zhCN).
 
     Author: David W Zhang
-    Version: 1.1.0
+    Version: 1.1.1
 ================================================================================
 --]]
 
