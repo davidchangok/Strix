@@ -4,7 +4,7 @@
 
 # Strix
 
-**Version:** 1.1.0
+**Version:** 1.1.1
 **Author:** David W Zhang
 **Repository:** [github.com/davidchangok/Strix](https://github.com/davidchangok/Strix)
 
@@ -41,7 +41,7 @@ Strix is a lightweight, event-driven mailing assistant for World of Warcraft ret
 
 # Strix (中文)
 
-**版本:** 1.1.0
+**版本:** 1.1.1
 **作者:** David W Zhang
 **仓库:** [github.com/davidchangok/Strix](https://github.com/davidchangok/Strix)
 
