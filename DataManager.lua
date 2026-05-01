@@ -300,7 +300,7 @@ function Data:PromoteAltToFirst(key)
 
     -- Not found or already first
     if not foundIndex then return false end
-    if foundIndex == 1 then return true end
+    if foundIndex == 1 then return false end
 
     -- Remove and insert at first position
     local alt = table.remove(db, foundIndex)
@@ -350,7 +350,7 @@ function Data:AddRecentRecipient(name, realm)
                 name = name,
                 realm = realm,
                 key = key,
-                timestamp = time()
+                timestamp = GetServerTime()
             })
             return true
         end
@@ -361,7 +361,7 @@ function Data:AddRecentRecipient(name, realm)
         name = name,
         realm = realm,
         key = key,
-        timestamp = time()
+        timestamp = GetServerTime()
     })
 
     -- Trim to max size

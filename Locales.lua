@@ -106,7 +106,7 @@ ApplyLocale(enUS)
 
 -- Override with client locale if available
 local clientLocale = GetLocale()
-if clientLocale == "zhCN" or clientLocale == "zhTW" then
+if clientLocale == "zhCN" then
     ApplyLocale(zhCN)
 end
 

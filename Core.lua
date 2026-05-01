@@ -25,7 +25,6 @@ local raceCorrections = {
     ["highmountaintauren"] = "highmountain",
     ["lightforgeddraenei"] = "lightforged",
     ["earthendwarf"] = "earthen",
-    ["voidelf"] = "voidelf",
 }
 
 -- ==============================================================================
@@ -85,6 +84,8 @@ Core:RegisterEvent("MAIL_SHOW")
 Core:RegisterEvent("MAIL_SEND_SUCCESS")
 Core:RegisterEvent("MAIL_INBOX_UPDATE")
 
+Core.lastInboxCheck = 0
+
 Core:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local name = ...
@@ -105,6 +106,9 @@ Core:SetScript("OnEvent", function(self, event, ...)
         self:OnMailSent()
 
     elseif event == "MAIL_INBOX_UPDATE" then
+        local now = GetServerTime()
+        if now - self.lastInboxCheck < 5 then return end
+        self.lastInboxCheck = now
         self:CheckInboxForAlts()
     end
 end)
@@ -168,7 +172,7 @@ end
 -- ==============================================================================
 -- Private Tooltip (avoid tainting GameTooltip)
 -- ==============================================================================
-local StrixTooltip = CreateFrame("GameTooltip", "StrixPrivateTooltip", UIParent, "GameTooltipTemplate")
+local StrixTooltip = CreateFrame("GameTooltip", "StrixPrivateTooltip", UIParent)
 StrixTooltip:SetFrameStrata("TOOLTIP")
 
 -- ==============================================================================
@@ -178,20 +182,10 @@ function Core:HookMailBox()
     if self.isHooked then return end
     if not SendMailNameEditBox then return end
 
+    -- Right-click context menu (preserved)
     SendMailNameEditBox:HookScript("OnMouseDown", function(editBox, button)
         if button == "RightButton" then
-            local anchor = CreateFrame("Frame", nil, UIParent)
-            anchor:SetSize(1, 1)
-            local x, y = GetCursorPosition()
-            local scale = UIParent:GetEffectiveScale()
-            if scale and scale > 0 then
-                anchor:SetPoint("BOTTOMLEFT", x / scale, y / scale)
-            else
-                anchor:SetPoint("BOTTOMLEFT", x, y)
-            end
-            MenuUtil.CreateContextMenu(anchor, function(owner, rootDescription)
-                Core:BuildMenu(rootDescription)
-            end)
+            Core:ShowMenuAtCursor()
         end
     end)
 
@@ -207,7 +201,69 @@ function Core:HookMailBox()
         StrixTooltip:Hide()
     end)
 
+    -- Dropdown button at the visual right edge of the recipient input field
+    if not self.dropdownBtn then
+        local btn = CreateFrame("Button", nil, SendMailFrame)
+        btn:SetSize(20, 20)
+        btn:SetFrameLevel(SendMailNameEditBox:GetFrameLevel() + 1)
+
+        local bg = btn:CreateTexture(nil, "BACKGROUND")
+        bg:SetAllPoints()
+        bg:SetColorTexture(0.15, 0.15, 0.15, 0.6)
+
+        btn:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
+
+        local arrow = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        arrow:SetPoint("CENTER")
+        arrow:SetText("▼")
+        arrow:SetTextColor(1, 0.82, 0)
+
+        btn:SetScript("OnClick", function(_, button)
+            MenuUtil.CreateContextMenu(btn, function(owner, rootDescription)
+                Core:BuildMenu(rootDescription)
+            end)
+        end)
+        btn:SetScript("OnEnter", function()
+            StrixTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+            StrixTooltip:SetText(L.TOOLTIP_TITLE)
+            StrixTooltip:Show()
+        end)
+        btn:SetScript("OnLeave", function()
+            StrixTooltip:Hide()
+        end)
+        self.dropdownBtn = btn
+    end
+
+    -- Anchor to SendMailNameEditBoxMiddle — the visual background of the input area
+    local middle = _G["SendMailNameEditBoxMiddle"] or SendMailNameEditBox.Middle
+    if middle then
+        self.dropdownBtn:ClearAllPoints()
+        self.dropdownBtn:SetPoint("RIGHT", middle, "RIGHT", 24, 0)
+    else
+        -- Fallback: use text insets
+        self.dropdownBtn:ClearAllPoints()
+        local editWidth = SendMailNameEditBox:GetWidth()
+        local _, rightInset = SendMailNameEditBox:GetTextInsets()
+        self.dropdownBtn:SetPoint("RIGHT", SendMailNameEditBox, "LEFT", editWidth - (rightInset or 4), 0)
+    end
+
     self.isHooked = true
+end
+
+-- Show the right-click context menu at current cursor position
+function Core:ShowMenuAtCursor()
+    local anchor = CreateFrame("Frame", nil, UIParent)
+    anchor:SetSize(1, 1)
+    local x, y = GetCursorPosition()
+    local scale = UIParent:GetEffectiveScale()
+    if scale and scale > 0 then
+        anchor:SetPoint("BOTTOMLEFT", x / scale, y / scale)
+    else
+        anchor:SetPoint("BOTTOMLEFT", x, y)
+    end
+    MenuUtil.CreateContextMenu(anchor, function(owner, rootDescription)
+        Core:BuildMenu(rootDescription)
+    end)
 end
 
 -- ==============================================================================
@@ -477,12 +533,12 @@ function Core:SetupAltsTab(parent)
             end)
             delBtn:SetScript("OnEnter", function()
                 if not addon.draggingIndex then
-                    GameTooltip:SetOwner(delBtn, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(DELETE)
-                    GameTooltip:Show()
+                    StrixTooltip:SetOwner(delBtn, "ANCHOR_RIGHT")
+                    StrixTooltip:SetText(DELETE)
+                    StrixTooltip:Show()
                 end
             end)
-            delBtn:SetScript("OnLeave", GameTooltip_Hide)
+            delBtn:SetScript("OnLeave", function() StrixTooltip:Hide() end)
             frame.delBtn = delBtn
 
             frame.initialized = true
@@ -618,11 +674,11 @@ function Core:SetupRecentTab(parent)
                 end
             end)
             moveBtn:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(moveBtn, "ANCHOR_RIGHT")
-                GameTooltip:SetText(L.ACTION_MOVE_TO_ALTS)
-                GameTooltip:Show()
+                StrixTooltip:SetOwner(moveBtn, "ANCHOR_RIGHT")
+                StrixTooltip:SetText(L.ACTION_MOVE_TO_ALTS)
+                StrixTooltip:Show()
             end)
-            moveBtn:SetScript("OnLeave", GameTooltip_Hide)
+            moveBtn:SetScript("OnLeave", function() StrixTooltip:Hide() end)
             frame.moveBtn = moveBtn
 
             -- Delete button
@@ -637,11 +693,11 @@ function Core:SetupRecentTab(parent)
                 end
             end)
             delBtn:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(delBtn, "ANCHOR_RIGHT")
-                GameTooltip:SetText(DELETE)
-                GameTooltip:Show()
+                StrixTooltip:SetOwner(delBtn, "ANCHOR_RIGHT")
+                StrixTooltip:SetText(DELETE)
+                StrixTooltip:Show()
             end)
-            delBtn:SetScript("OnLeave", GameTooltip_Hide)
+            delBtn:SetScript("OnLeave", function() StrixTooltip:Hide() end)
             frame.delBtn = delBtn
 
             frame.initialized = true
